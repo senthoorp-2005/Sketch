@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sketch Page</title>
+	<style>
+		#can:hover
+		{
+			box-shadow: 5px 5px 15px blue;
+		}
+	</style>
+</head>
+<body>
+	<h1 align="center" style="background-color:cyan">The Sketch Page</h1>
+	<canvas id="can" height=500px width=1380px>
+	</canvas>
+	<br><br>
+	<div align="center">
+		<button onclick="Draw()">Draw</button>
+		<button onclick="Erase()">Erase</button>
+	</div>
+</body>
+<script>
+	var temp=document.getElementById("can");
+	var c=temp.getContext("2d");
+	var isDrawing=false;
+	var isErasing=false;
+	var lastX=0;
+	var lastY=0;
+	
+	Draw();
+	
+	function Draw()
+	{
+		isErasing=false;
+		c.globalCompositeOperation="source-over";
+		c.strokeStyle="black";
+		c.lineWidth=3;
+	}
+	
+	function Erase()
+	{
+		isErasing=true;
+		c.globalCompositeOperation = "destination-out";
+		c.strokeStyle='rgba(0,0,0,1)';
+		c.lineWidth=10;
+	}
+	
+	function getPos(event)
+	{
+		var rect=temp.getBoundingClientRect();
+		return {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top
+		};
+	}
+	
+	temp.addEventListener("mousedown",function(e)
+	{
+		var pos=getPos(e);
+		if(pos)
+		{
+			isDrawing=true;
+			lastX=pos.x;
+			lastY=pos.y;
+		}
+	});
+	
+	temp.addEventListener("mousemove",function(e)
+	{
+		if(isDrawing)
+		{
+			var pos=getPos(e);
+			if(pos)
+			{
+				c.beginPath();
+				c.moveTo(lastX,lastY);
+				c.lineTo(pos.x,pos.y);
+				c.stroke();
+				lastX=pos.x;
+				lastY=pos.y;
+			}
+		}
+	});
+	
+	temp.addEventListener("mouseup",function(){
+		isDrawing=false;
+	});
+
+	temp.addEventListener("mouseout",function(){
+		isDrawing=false;
+	});
+</script>
+</html>
